@@ -1,13 +1,19 @@
+/*jslint node: true */
+/*jshint node: true */
+'use strict';
+
 var gulp = require('gulp'),
+    rename = require('gulp-rename'),
     minifyCss = require("gulp-minify-css"),
     plumber = require("gulp-plumber"),
-    sourceMaps = require("gulp-sourcemaps"),
     uglify = require("gulp-uglify"),
-    browserSync = require("browser-sync");
+    browserSync = require("browser-sync").create(),
+    reload = browserSync.reload;
 
 gulp.task('html', function () {
     return gulp.src('./autocomplete.html')
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./dist'))
+        .pipe(browserSync.stream());
 });
 
 gulp.task('libs', function () {
@@ -19,17 +25,34 @@ gulp.task('libs', function () {
 
 gulp.task('js', function () {
     return gulp.src('./autocomplete.js')
-        .pipe(gulp.dest('./dist/js'));
+        .pipe(plumber())
+        .pipe(uglify())
+        .pipe(rename('autocomplete.min.js'))
+        .pipe(gulp.dest('./dist/js'))
+        .pipe(browserSync.stream());
 });
 
 gulp.task('css', function () {
     return gulp.src('./autocomplete.css')
-        .pipe(gulp.dest('./dist/css'));
+        .pipe(plumber())
+        .pipe(minifyCss())
+        .pipe(rename('autocomplete.min.css'))
+        .pipe(gulp.dest('./dist/css'))
+        .pipe(browserSync.stream());
 });
 
-gulp.task('watch', function () {
+gulp.task('serve', function () {
+    browserSync.init({
+        server: {
+            baseDir: "./dist",
+            index: 'autocomplete.html'
+        }
+    });
 
+    gulp.watch('autocomplete.html', ['html']).on('change', reload);
+    gulp.watch('autocomplete.js', ['js']).on('change', reload);
+    gulp.watch('autocomplete.css', ['css']).on('change', reload);
 });
 
-gulp.task('default', ['build', 'watch']);
+gulp.task('default', ['build', 'serve']);
 gulp.task('build', ['html', 'libs', 'js', 'css']);
