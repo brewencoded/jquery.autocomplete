@@ -8,7 +8,8 @@ var gulp = require('gulp'),
     plumber = require("gulp-plumber"),
     uglify = require("gulp-uglify"),
     browserSync = require("browser-sync").create(),
-    reload = browserSync.reload;
+    reload = browserSync.reload,
+    nodemon = require('gulp-nodemon');
 
 gulp.task('html', function () {
     return gulp.src('./autocomplete.html')
@@ -41,12 +42,26 @@ gulp.task('css', function () {
         .pipe(browserSync.stream());
 });
 
-gulp.task('serve', function () {
-    browserSync.init({
-        server: {
-            baseDir: "./dist",
-            index: 'autocomplete.html'
-        }
+gulp.task('json', function () {
+    return gulp.src('./autocomplete.json')
+        .pipe(plumber())
+        .pipe(uglify({
+            mangle: false
+        }))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('server', function () {
+    return gulp.src('./server.js')
+        .pipe(plumber())
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('serve', ['nodemon'], function () {
+    browserSync.init(null, {
+        proxy: 'http://localhost:3000',
+        browser: 'google chrome',
+        port: 4000
     });
 
     gulp.watch('autocomplete.html', ['html']).on('change', reload);
@@ -54,5 +69,19 @@ gulp.task('serve', function () {
     gulp.watch('autocomplete.css', ['css']).on('change', reload);
 });
 
-gulp.task('default', ['build', 'serve']);
-gulp.task('build', ['html', 'libs', 'js', 'css']);
+gulp.task('nodemon', function (cb) {
+    var started = false;
+    return nodemon({
+        script: './dist/server.js'
+    }).on('start', function () {
+        // to avoid nodemon being started multiple times
+        // thanks @matthisk
+        if (!started) {
+            cb();
+            started = true;
+        }
+    });
+});
+
+gulp.task('default', ['dist', 'serve']);
+gulp.task('dist', ['html', 'libs', 'js', 'css', 'json', 'server']);
