@@ -6,6 +6,13 @@ var express = require("express"),
     app = express(),
     fs = require('fs');
 
+app.use('/css', express.static(__dirname + '/css'));
+app.use('/js', express.static(__dirname + '/js'));
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/autocomplete.html');
+});
+
 //match entire word
 app.get('/api/search', function (req, res) {
     var value = req.query.value;
@@ -41,7 +48,6 @@ function search(req, res, value, matchBy) {
                 });
             } else {
                 obj.forEach(function (item) {
-                    console.log(item);
                     if (item.label.indexOf(value) != -1) {
                         results.push(item);
                     }

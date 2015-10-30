@@ -40,7 +40,7 @@
 
     $.fn.autocomplete.defaults = {
         event: 'keyup',
-        delay: 1000
+        delay: 400
     };
 
 }(jQuery));

@@ -29,11 +29,12 @@
     <script>
         $(document).ready(function() {
             $('#autocomplete').autocomplete({
-                url: 'localhost:4000/api/query',
+                url: '/api/query',
                 callback: function(data) {
+                    $('.results ul').empty();
                     for (var item in data) {
                         if (data.hasOwnProperty(item)) {
-                            $('.results ul').append('<li>' + item.label + ':' + item.actor + '</li>');
+                            $('.results ul').append('<li>' + data[item].label + ':' + data[item].actor + '</li>');
                         }
                     }
                 }

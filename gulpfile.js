@@ -11,17 +11,11 @@ var gulp = require('gulp'),
     reload = browserSync.reload,
     nodemon = require('gulp-nodemon');
 
-gulp.task('html', function () {
-    return gulp.src('./autocomplete.html')
-        .pipe(gulp.dest('./dist'))
-        .pipe(browserSync.stream());
-});
-
 gulp.task('libs', function () {
     return gulp.src([
         './bower_components/jquery/dist/jquery.min.js'
     ])
-        .pipe(gulp.dest('./dist/js/libs'));
+        .pipe(gulp.dest('./js/libs'));
 });
 
 gulp.task('js', function () {
@@ -29,7 +23,7 @@ gulp.task('js', function () {
         .pipe(plumber())
         .pipe(uglify())
         .pipe(rename('autocomplete.min.js'))
-        .pipe(gulp.dest('./dist/js'))
+        .pipe(gulp.dest('./js'))
         .pipe(browserSync.stream());
 });
 
@@ -38,23 +32,8 @@ gulp.task('css', function () {
         .pipe(plumber())
         .pipe(minifyCss())
         .pipe(rename('autocomplete.min.css'))
-        .pipe(gulp.dest('./dist/css'))
+        .pipe(gulp.dest('./css'))
         .pipe(browserSync.stream());
-});
-
-gulp.task('json', function () {
-    return gulp.src('./autocomplete.json')
-        .pipe(plumber())
-        .pipe(uglify({
-            mangle: false
-        }))
-        .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('server', function () {
-    return gulp.src('./server.js')
-        .pipe(plumber())
-        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('serve', ['nodemon'], function () {
@@ -64,7 +43,7 @@ gulp.task('serve', ['nodemon'], function () {
         port: 4000
     });
 
-    gulp.watch('autocomplete.html', ['html']).on('change', reload);
+    gulp.watch('autocomplete.html').on('change', reload);
     gulp.watch('autocomplete.js', ['js']).on('change', reload);
     gulp.watch('autocomplete.css', ['css']).on('change', reload);
 });
@@ -72,7 +51,7 @@ gulp.task('serve', ['nodemon'], function () {
 gulp.task('nodemon', function (cb) {
     var started = false;
     return nodemon({
-        script: './dist/server.js'
+        script: './server.js'
     }).on('start', function () {
         // to avoid nodemon being started multiple times
         // thanks @matthisk
@@ -84,4 +63,4 @@ gulp.task('nodemon', function (cb) {
 });
 
 gulp.task('default', ['dist', 'serve']);
-gulp.task('dist', ['html', 'libs', 'js', 'css', 'json', 'server']);
+gulp.task('dist', ['libs', 'js', 'css']);
