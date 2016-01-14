@@ -38,7 +38,7 @@ html
 ```
 
 js 
-```
+``` javascript
 $('#your-input-element').autocomplete({
 	url: '/you/url',
 	callback: function (data_from_server) {
