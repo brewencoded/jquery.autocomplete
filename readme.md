@@ -26,10 +26,10 @@ Include script in your document using the following line:
 
 ### Usage
 
-Syntax:
+Syntax: `$('#your-input-element').autocomplete({ url: 'your-url', callback: function(data_from_server){} });`
 
 html
-```
+``` html
 <input type="text" id="autocomplete" placeholder="search" autocomplete="off">
 <div class="results">
     <ul>
@@ -39,9 +39,9 @@ html
 
 js 
 ``` javascript
-$('#your-input-element').autocomplete({
+$('#autocomplete').autocomplete({
 	url: '/you/url',
-	callback: function (data_from_server) {
+	callback: function (data) {
 		$('.results ul').empty();
         for (var item in data) {
             if (data.hasOwnProperty(item)) {
