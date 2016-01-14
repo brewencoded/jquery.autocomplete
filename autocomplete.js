@@ -26,10 +26,10 @@
                 $.ajax({
                     url: opts.url,
                     data: {
-                        "value": opts.searchfield.val()
+                        value: opts.searchfield.val()
                     },
                     method: 'get'
-                }).success(function (data) {
+                }).done(function (data) {
                     opts.callback(data);
                 });
             }, opts.delay);
